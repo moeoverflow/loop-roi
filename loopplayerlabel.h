@@ -9,6 +9,8 @@
 #include <vector>
 #include <QVector>
 
+#include "looproi.h"
+
 class LoopPlayerLabel : public QLabel
 {
     Q_OBJECT
@@ -44,6 +46,8 @@ private:
     int edgeBottom = 0;
 
     void updateLayoutValue();
+
+    LoopRoi loopRoi;
 
 signals:
 

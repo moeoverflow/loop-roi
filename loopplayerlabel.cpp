@@ -1,5 +1,4 @@
 #include "loopplayerlabel.h"
-#include <iostream>
 #include <QPainter>
 
 LoopPlayerLabel::LoopPlayerLabel(QWidget *parent) : QLabel(parent)
@@ -28,10 +27,10 @@ void LoopPlayerLabel::updateLoopPlayerUI(QImage img)
         QPainter painter(&p);
         painter.setRenderHint(QPainter::Antialiasing, true);
         painter.setPen(QPen(QColor(0, 0, 255), 4, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-        painter.drawLines(*this->displayingRoi);
-        if (!this->pressing) {
-            auto prevPoint = *this->displayingRoi->begin();
-            auto nextPoint = *(this->displayingRoi->end()-1);
+        painter.drawLines(*this->loopRoi.points);
+        if (!this->loopRoi.drawing) {
+            auto prevPoint = *this->loopRoi.points->begin();
+            auto nextPoint = *(this->loopRoi.points->end()-1);
             painter.drawLine(prevPoint, nextPoint);
         }
 
@@ -41,7 +40,7 @@ void LoopPlayerLabel::updateLoopPlayerUI(QImage img)
 
 void LoopPlayerLabel::mouseMoveEvent(QMouseEvent *event)
 {
-    if (this->pressing)
+    if (this->loopRoi.drawing)
     {
         int x = event->x();
         int y = event->y();
@@ -49,27 +48,41 @@ void LoopPlayerLabel::mouseMoveEvent(QMouseEvent *event)
         if (x > edgeRight) x = edgeRight;
         if (y < edgeTop) y = edgeTop;
         if (y > edgeBottom) y = edgeBottom;
-
         x = static_cast<int>((x-edgeLeft) / contentScale);
         y = static_cast<int>((y-edgeTop) / contentScale);
 
         QPoint point(x, y);
-        this->displayingRoi->append(point);
-
+        this->loopRoi.points->append(point);
     }
 }
 
 void LoopPlayerLabel::mousePressEvent(QMouseEvent *event)
 {
-    this->pressing = true;
-    this->displayingRoi = new QVector<QPoint>();
+    auto loopData = this->player->getLoopData();
+    if (loopData == nullptr) return;
+
+    this->loopRoi.drawing = true;
+    this->loopRoi.points = new QVector<QPoint>();
+    this->loopRoi.width = this->width();
+    this->loopRoi.height = this->height();
     this->updateLayoutValue();
 }
 
 void LoopPlayerLabel::mouseReleaseEvent(QMouseEvent *event)
 {
-    this->pressing = false;
-    this->player->setPoints(this->displayingRoi);
+    auto player = this->getPlayer();
+    auto loopData = player->getLoopData();
+    if (loopData == nullptr) return;
+
+    this->loopRoi.drawing = false;
+
+    player->pause();
+    loopData->loadData();
+    auto frames = loopData->getFrames();
+    auto roiFrames = this->loopRoi.generateRoiFrames(frames);
+    loopData->setFrames(roiFrames);
+    player->play();
+
 }
 
 void LoopPlayerLabel::resizeEvent(QResizeEvent *event)
@@ -79,12 +92,19 @@ void LoopPlayerLabel::resizeEvent(QResizeEvent *event)
 
 void LoopPlayerLabel::updateLayoutValue()
 {
-    contentWidth = this->player->width;
-    contentHeight = this->player->height;
+    auto loopData = this->player->getLoopData();
+
+    if (loopData != nullptr)
+    {
+        contentWidth = loopData->getWidth();
+        contentHeight = loopData->getHeight();
+    }
+
     contentRatio = static_cast<double>(contentWidth) / static_cast<double>(contentHeight);
     screenWidth = this->width();
     screenHeight = this->height();
     screenRatio = static_cast<double>(screenWidth) / static_cast<double>(screenHeight);
+
 
     edgeLeft = 0;
     edgeRight = screenWidth;

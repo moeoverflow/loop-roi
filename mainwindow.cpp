@@ -27,13 +27,7 @@ void MainWindow::on_openFileButton_clicked()
 
     if (!filename.isEmpty())
     {
-        if (!this->player->loadVideo(filename.toStdString().data()))
-        {
-            QMessageBox msgBox;
-            msgBox.setText("The selected video could not be opened!");
-            msgBox.exec();
-        }
-
+        this->player->loadVideo(filename.toStdString());
         this->player->play();
     }
 }

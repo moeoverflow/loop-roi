@@ -6,24 +6,21 @@
 #include <QThread>
 #include <QImage>
 #include <QWaitCondition>
-#include <opencv2/core/core.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
-#include <opencv2/highgui/highgui.hpp>
+
+#include "loopdata.h"
 
 class LoopPlayer : public QThread
 {   Q_OBJECT
 private:
-    cv::VideoCapture capture;
-    cv::Mat frame;
     bool stop;
     QMutex mutex;
     QWaitCondition condition;
-    std::vector<cv::Mat> frames;
-    double frameRate;
     QImage img;
 
-    QVector<QPoint> points;
-    QVector<QPoint> selectedPoints;
+    LoopData * loopData;
+
+    int width = 0;
+    int height = 0;
 
     void updateFrames();
 
@@ -34,17 +31,22 @@ protected:
     void run();
     void msleep(int ms);
 public:
-    int width;
-    int height;
 
-    LoopPlayer(QObject *parent = 0);
+    LoopPlayer(QObject *parent = nullptr);
     ~LoopPlayer();
-    bool loadVideo(std::string filename);
+
+    void loadVideo(std::string filename);
+
     void play();
     void pause();
     bool isStopped() const;
 
     void setPoints(QVector<QPoint> * points);
+
+    LoopData * getLoopData();
+
+    void setWidth(int width);
+    void setHeight(int height);
 };
 
 #endif // LOOPPLAYER_H

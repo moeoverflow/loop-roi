@@ -34,12 +34,16 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     loopplayer.cpp \
-    loopplayerlabel.cpp
+    loopplayerlabel.cpp \
+    loopdata.cpp \
+    looproi.cpp
 
 HEADERS += \
         mainwindow.h \
     loopplayer.h \
-    loopplayerlabel.h
+    loopplayerlabel.h \
+    loopdata.h \
+    looproi.h
 
 FORMS += \
         mainwindow.ui

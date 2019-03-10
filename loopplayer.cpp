@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+using namespace std;
+
 LoopPlayer::LoopPlayer(QObject *parent) : QThread(parent)
 {
     stop = true;
@@ -14,31 +16,19 @@ LoopPlayer::~LoopPlayer()
     condition.wakeOne();
     mutex.unlock();
     wait();
+    delete this->loopData;
 }
 
-bool LoopPlayer::loadVideo(std::string filename)
+void LoopPlayer::loadVideo(string filename)
 {
-    capture.open(filename);
-    if (capture.isOpened())
-    {
-        frameRate = capture.get(CV_CAP_PROP_FPS);
-        width = static_cast<int>(capture.get(CV_CAP_PROP_FRAME_WIDTH));
-        height = static_cast<int>(capture.get(CV_CAP_PROP_FRAME_HEIGHT));
-        capture.read(frame);
-        if (frame.channels() == 3)
-        {
-            cv::cvtColor(frame, frame, CV_BGR2RGB);
-        }
-        capture.set(CV_CAP_PROP_POS_FRAMES, 0);
-        return true;
-    }
-
-    return false;
+    this->pause();
+    this->loopData = new LoopData(filename);
 }
+
 
 void LoopPlayer::play()
 {
-    if (!isRunning())
+    if (!isRunning() && this->loopData != nullptr)
     {
         if (isStopped())
         {
@@ -51,26 +41,10 @@ void LoopPlayer::play()
 
 void LoopPlayer::run()
 {
-    int delay = static_cast<int>(1000.0 / frameRate);
-
-    cv::Mat frame;
-    while (!stop) {
-        if (!capture.read(frame)) {
-            capture.set(CV_CAP_PROP_POS_FRAMES, 0);
-            capture.read(frame);
-        }
-//            capture.set(CV_CAP_PROP_FRAME_WIDTH, 1280);
-//            capture.set(CV_CAP_PROP_FRAME_HEIGHT, 720);
-        if (frame.channels() == 3)
-        {
-            cv::cvtColor(frame, frame, CV_BGR2RGB);
-        }
-
-        cv::Mat displayFrame = this->frame.clone();
-        for (auto selectedPoint : this->selectedPoints) {
-            cv::Rect rect(selectedPoint.x(), selectedPoint.y(), 1, 1);
-            displayFrame(rect).setTo(frame(rect));
-        }
+    while (!stop && this->loopData != nullptr) {
+        cv::Mat frame;
+        int delay = static_cast<int>(1000.0 / this->loopData->getFPS());
+        cv::Mat displayFrame = this->loopData->nextFrame();
 
         if (displayFrame.channels() == 3)
         {
@@ -113,53 +87,25 @@ bool LoopPlayer::isStopped() const
     return stop;
 }
 
-bool PointInPolygon(QPoint point, QVector<QPoint> polygon);
+LoopData * LoopPlayer::getLoopData()
+{
+    return this->loopData;
+}
 
-void LoopPlayer::updateFrames() {
-//        cv::Mat mask = cv::Mat::zeros(frame.size(), CV_8UC1);
-//        QVector<QPoint> pointsInside;
-    int edgeLeft = frame.cols;
-    int edgeRight = 0;
-    int edgeTop = frame.rows;
-    int edgeBottom = 0;
-    for (auto point : this->points) {
-       edgeLeft = std::min(point.x(), edgeLeft);
-       edgeRight = std::max(point.x(), edgeRight);
-       edgeTop = std::min(point.y(), edgeTop);
-       edgeBottom = std::max(point.y(), edgeBottom);
-    }
-
-
-    selectedPoints.clear();
-
-    for (int w = edgeLeft; w < edgeRight; ++w) {
-        for (int h = edgeTop; h < edgeBottom; ++h) {
-            QPoint point(w, h);
-            bool isInPolygon = PointInPolygon(point, this->points);
-            if (isInPolygon) {
-                selectedPoints.append(point);
-            }
-        }
+void LoopPlayer::setWidth(int width)
+{
+    this->width = width;
+    if (this->loopData != nullptr)
+    {
+        this->loopData->setWidth(width);
     }
 }
 
-void LoopPlayer::setPoints(QVector<QPoint> * points) {
-    this->points = *points;
-    this->updateFrames();
-}
-
-bool PointInPolygon(QPoint point, QVector<QPoint> polygon) {
-  int i, j, nvert = polygon.size();
-  if (nvert == 0) return false;
-  bool c = false;
-
-  QPoint * points = polygon.data();
-  for(i = 0, j = nvert - 1; i < nvert; j = i++) {
-    if( ( (points[i].y() >= point.y() ) != (points[j].y() >= point.y()) ) &&
-        (point.x() <= (points[j].x() - points[i].x()) * (point.y() - points[i].y()) / (points[j].y() - points[i].y()) + points[i].x())
-      )
-      c = !c;
-  }
-
-  return c;
+void LoopPlayer::setHeight(int height)
+{
+    this->width = width;
+    if (this->loopData != nullptr)
+    {
+        this->loopData->setHeight(height);
+    }
 }
