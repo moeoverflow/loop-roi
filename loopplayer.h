@@ -17,7 +17,7 @@ private:
     QWaitCondition condition;
     QImage img;
 
-    LoopData * loopData;
+    LoopData * loopData = nullptr;
 
     int width = 0;
     int height = 0;

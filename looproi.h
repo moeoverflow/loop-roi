@@ -23,9 +23,6 @@ public:
 
 private:
     bool pointInPolygon(QPoint point, QVector<QPoint> polygon);
-
-    double contentScale = 1;
-
 };
 
 #endif // LOOPROI_H

@@ -28,7 +28,7 @@ public:
     void writeFile(std::string filepath);
 
 private:
-    LoopPlayer * player;
+    LoopPlayer * player = nullptr;
     bool pressing = false;
     QVector<QPoint> * selectedRoi;
     QVector<QPoint> * displayingRoi;
