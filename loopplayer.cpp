@@ -103,7 +103,7 @@ void LoopPlayer::setWidth(int width)
 
 void LoopPlayer::setHeight(int height)
 {
-    this->width = width;
+    this->height = height;
     if (this->loopData != nullptr)
     {
         this->loopData->setHeight(height);

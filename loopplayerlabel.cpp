@@ -77,9 +77,8 @@ void LoopPlayerLabel::mouseReleaseEvent(QMouseEvent *event)
     this->loopRoi.drawing = false;
 
     player->pause();
-    loopData->loadData();
-    auto frames = loopData->getFrames();
-    auto roiFrames = this->loopRoi.generateRoiFrames(frames);
+    auto frames = loopData->loadData();
+    auto roiFrames = this->loopRoi.generateRoiFrames(frames, *loopRoi.points);
     loopData->setFrames(roiFrames);
     player->play();
 
@@ -125,4 +124,24 @@ void LoopPlayerLabel::updateLayoutValue()
         edgeRight -= edge;
     }
 }
+
+void LoopPlayerLabel::writeFile(std::string filepath) {
+    auto loopData = this->player->getLoopData();
+    if (loopData != nullptr)
+    {
+        auto frames = loopData->loadData(false);
+        auto points = *this->loopRoi.points;
+        for (auto point : points)
+        {
+            point.setX(static_cast<int>(point.x() / contentScale));
+            point.setY(static_cast<int>(point.y() / contentScale));
+        }
+
+        auto roiFrames = loopRoi.generateRoiFrames(frames, points);
+
+        loopData->writeFile(roiFrames, filepath);
+
+    }
+}
+
 

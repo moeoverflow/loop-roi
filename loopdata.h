@@ -13,7 +13,9 @@ public:
     explicit LoopData(std::string filename, QObject *parent = nullptr);
     ~LoopData();
 
-    void loadData();
+    std::string filename;
+
+    std::vector<cv::Mat> loadData(bool shouldResize = true);
     double getFPS();
     int getWidth();
     int getHeight();
@@ -26,12 +28,13 @@ public:
 
     void setWidth(int width);
     void setHeight(int height);
+
+    void writeFile(std::vector<cv::Mat> frames, std::string filepath);
 private:
     /**
      * @brief original file capture
      */
     cv::VideoCapture capture;
-    std::string filename;
 
     /**
      * @brief loop data

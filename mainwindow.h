@@ -18,6 +18,7 @@ public:
 
 private slots:
     void on_openFileButton_clicked();
+    void on_exportButton_clicked();
 
 private:
     Ui::MainWindow *ui;

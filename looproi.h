@@ -19,11 +19,13 @@ public:
     int width = 0;
     int height = 0;
 
-    std::vector<cv::Mat> generateRoiFrames(std::vector<cv::Mat> frames);
-
+    std::vector<cv::Mat> generateRoiFrames(std::vector<cv::Mat> frames, QVector<QPoint> points);
 
 private:
     bool pointInPolygon(QPoint point, QVector<QPoint> polygon);
+
+    double contentScale = 1;
+
 };
 
 #endif // LOOPROI_H

@@ -25,6 +25,8 @@ public:
 
     LoopPlayer * getPlayer();
 
+    void writeFile(std::string filepath);
+
 private:
     LoopPlayer * player;
     bool pressing = false;

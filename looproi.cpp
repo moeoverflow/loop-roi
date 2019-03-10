@@ -26,7 +26,7 @@ bool LoopRoi::pointInPolygon(QPoint point, QVector<QPoint> polygon) {
   return c;
 }
 
-vector<Mat> LoopRoi::generateRoiFrames(const vector<Mat> frames)
+vector<Mat> LoopRoi::generateRoiFrames(const vector<Mat> frames, QVector<QPoint> points)
 {
     Mat staticFrame = frames[0];
 
@@ -34,7 +34,7 @@ vector<Mat> LoopRoi::generateRoiFrames(const vector<Mat> frames)
     int edgeRight = 0;
     int edgeTop = staticFrame.cols;
     int edgeBottom = 0;
-    for (auto point : *this->points) {
+    for (auto point : points) {
        edgeLeft = std::min(point.x(), edgeLeft);
        edgeRight = std::max(point.x(), edgeRight);
        edgeTop = std::min(point.y(), edgeTop);
