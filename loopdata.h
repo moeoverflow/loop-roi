@@ -15,7 +15,7 @@ public:
 
     std::string filename;
 
-    std::vector<cv::Mat> loadData(bool shouldResize = true);
+    std::vector<cv::Mat> loadData();
     double getFPS();
     int getWidth();
     int getHeight();

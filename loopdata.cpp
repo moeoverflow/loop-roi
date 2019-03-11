@@ -18,7 +18,7 @@ LoopData::~LoopData()
     this->capture.release();
 }
 
-vector<Mat> LoopData::loadData(bool shouldResize)
+vector<Mat> LoopData::loadData()
 {
     vector<Mat> frames;
 
@@ -31,9 +31,6 @@ vector<Mat> LoopData::loadData(bool shouldResize)
             if (frame.channels() == 3)
             {
                 cvtColor(frame, frame, CV_BGR2RGB);
-            }
-            if (shouldResize) {
-                resize(frame, frame, Size(this->width, this->height));
             }
             frames.push_back(frame.clone());
         }

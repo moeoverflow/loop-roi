@@ -142,14 +142,8 @@ void LoopPlayerLabel::writeFile(std::string filepath) {
     auto loopData = this->player->getLoopData();
     if (loopData != nullptr)
     {
-        auto frames = loopData->loadData(false);
+        auto frames = loopData->loadData();
         auto points = *this->loopRoi.points;
-        for (auto point : points)
-        {
-            point.setX(static_cast<int>(point.x() / contentScale));
-            point.setY(static_cast<int>(point.y() / contentScale));
-        }
-
         auto roiFrames = loopRoi.generateRoiFrames(frames, points);
 
         loopData->writeFile(roiFrames, filepath);
