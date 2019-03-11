@@ -19,6 +19,8 @@ public:
     int width = 0;
     int height = 0;
 
+    bool reverse = false;
+
     std::vector<cv::Mat> generateRoiFrames(std::vector<cv::Mat> frames, QVector<QPoint> points);
 
 private:

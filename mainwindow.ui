@@ -78,6 +78,13 @@
             </property>
            </spacer>
           </item>
+          <item>
+           <widget class="QCheckBox" name="reverseRoiCheckBox">
+            <property name="text">
+             <string>reverse</string>
+            </property>
+           </widget>
+          </item>
          </layout>
         </item>
         <item>

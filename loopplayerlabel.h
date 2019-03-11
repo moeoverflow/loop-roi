@@ -23,7 +23,10 @@ public:
 
     void resizeEvent(QResizeEvent *event);
 
+    void updateRoiFrames();
+
     LoopPlayer * getPlayer();
+    LoopRoi * getLoopRoi();
 
     void writeFile(std::string filepath);
 

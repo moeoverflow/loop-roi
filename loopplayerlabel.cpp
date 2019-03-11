@@ -17,6 +17,10 @@ LoopPlayer * LoopPlayerLabel::getPlayer() {
     return this->player;
 }
 
+LoopRoi * LoopPlayerLabel::getLoopRoi() {
+    return &this->loopRoi;
+}
+
 void LoopPlayerLabel::updateLoopPlayerUI(QImage img)
 {
 
@@ -76,12 +80,21 @@ void LoopPlayerLabel::mouseReleaseEvent(QMouseEvent *event)
 
     this->loopRoi.drawing = false;
 
+
+    this->updateRoiFrames();
+}
+
+void LoopPlayerLabel::updateRoiFrames()
+{
+    auto player = this->getPlayer();
+    auto loopData = player->getLoopData();
+    if (loopData == nullptr) return;
+
     player->pause();
     auto frames = loopData->loadData();
     auto roiFrames = this->loopRoi.generateRoiFrames(frames, *loopRoi.points);
     loopData->setFrames(roiFrames);
     player->play();
-
 }
 
 void LoopPlayerLabel::resizeEvent(QResizeEvent *event)

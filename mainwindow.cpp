@@ -11,6 +11,8 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     player = ui->playerLabel->getPlayer();
+
+    connect(ui->reverseRoiCheckBox, SIGNAL(stateChanged(int)), this, SLOT(onReverseRoiCheckBoxStateChanged(int)));
 }
 
 MainWindow::~MainWindow()
@@ -47,3 +49,10 @@ void MainWindow::on_exportButton_clicked()
 
 }
 
+void MainWindow::onReverseRoiCheckBoxStateChanged(int state)
+{
+    auto playerLabel = this->ui->playerLabel;
+    auto loopRoi = playerLabel->getLoopRoi();
+    loopRoi->reverse = state;
+    playerLabel->updateRoiFrames();
+}

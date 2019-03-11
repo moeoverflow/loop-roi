@@ -46,18 +46,18 @@ vector<Mat> LoopRoi::generateRoiFrames(const vector<Mat> frames, QVector<QPoint>
     vector<Mat> roiFrames;
     for (auto frame : frames)
     {
-        Mat roiFrame = staticFrame.clone();
+        Mat roiFrame = this->reverse ? frame.clone() : staticFrame.clone();
         roiFrames.push_back(roiFrame);
     }
     for (int w = edgeLeft; w < edgeRight; ++w) {
         for (int h = edgeTop; h < edgeBottom; ++h) {
             QPoint point(w, h);
+            Point cvPoint(w, h);
             bool isInPolygon = this->pointInPolygon(point, *this->points);
             if (isInPolygon) {
-                Point cvPoint(w, h);
                 for (unsigned long i = 0; i < roiFrames.size(); i++)
                 {
-                    roiFrames[i].at<cv::Vec3b>(cvPoint) = frames[i].at<cv::Vec3b>(cvPoint);
+                    roiFrames[i].at<cv::Vec3b>(cvPoint) = (this->reverse ? staticFrame : frames[i]).at<cv::Vec3b>(cvPoint);
                 }
             }
         }
