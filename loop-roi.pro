@@ -20,12 +20,18 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-QT_CONFIG -= no-pkg-config
-CONFIG += link_pkgconfig
-PKGCONFIG += opencv
+#QT_CONFIG -= no-pkg-config
+#CONFIG += link_pkgconfig
+#PKGCONFIG += opencv
+
+#macx {
+#    PKG_CONFIG = /usr/local/bin/pkg-config
+#}
 
 macx {
-    PKG_CONFIG = /usr/local/bin/pkg-config
+    INCLUDEPATH += /usr/local/include
+    LIBS += `/usr/local/bin/pkg-config opencv --libs-only-L` -lopencv_core -lopencv_imgproc -lopencv_highgui -lopencv_videoio
+    unix:QMAKE_RPATHDIR += @executable_path/../Frameworks
 }
 
 CONFIG += c++11
