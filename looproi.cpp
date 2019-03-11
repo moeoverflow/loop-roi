@@ -30,9 +30,9 @@ vector<Mat> LoopRoi::generateRoiFrames(const vector<Mat> frames, QVector<QPoint>
 {
     Mat staticFrame = frames[0];
 
-    int edgeLeft = staticFrame.rows;
+    int edgeLeft = staticFrame.cols;
     int edgeRight = 0;
-    int edgeTop = staticFrame.cols;
+    int edgeTop = staticFrame.rows;
     int edgeBottom = 0;
     for (auto point : points) {
        edgeLeft = std::min(point.x(), edgeLeft);
@@ -40,8 +40,8 @@ vector<Mat> LoopRoi::generateRoiFrames(const vector<Mat> frames, QVector<QPoint>
        edgeTop = std::min(point.y(), edgeTop);
        edgeBottom = std::max(point.y(), edgeBottom);
     }
-    edgeRight = std::min(edgeRight, staticFrame.rows);
-    edgeBottom = std::min(edgeBottom, staticFrame.cols);
+    edgeRight = std::min(edgeRight, staticFrame.cols);
+    edgeBottom = std::min(edgeBottom, staticFrame.rows);
 
     vector<Mat> roiFrames;
     for (auto frame : frames)
@@ -49,8 +49,8 @@ vector<Mat> LoopRoi::generateRoiFrames(const vector<Mat> frames, QVector<QPoint>
         Mat roiFrame = staticFrame.clone();
         roiFrames.push_back(roiFrame);
     }
-    for (int w = edgeLeft; w < edgeRight-1; ++w) {
-        for (int h = edgeTop; h < edgeBottom-1; ++h) {
+    for (int w = edgeLeft; w < edgeRight; ++w) {
+        for (int h = edgeTop; h < edgeBottom; ++h) {
             QPoint point(w, h);
             bool isInPolygon = this->pointInPolygon(point, *this->points);
             if (isInPolygon) {
