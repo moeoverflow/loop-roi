@@ -22,7 +22,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 QT_CONFIG -= no-pkg-config
 CONFIG += link_pkgconfig
-PKGCONFIG += opencv aubio
+PKGCONFIG += opencv
 
 macx {
     PKG_CONFIG = /usr/local/bin/pkg-config
